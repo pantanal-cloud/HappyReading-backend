@@ -1,0 +1,48 @@
+spring:
+  freemarker:
+    allow-request-override: false
+    allow-session-override: false
+    cache: false
+    charset: UTF-8
+    check-template-location: true
+    content-type: text/html
+    enabled: true
+    expose-request-attributes: true
+    expose-session-attributes: true
+    expose-spring-macro-helpers: true
+    request-context-attribute: true
+    prefer-file-system-access: true
+    suffix: .ftl
+    template-loader-path: classpath:/templates/
+    settings.template_update_delay: 0
+    settings.default_encoding: UTF-8
+    settings.classic_compatible: true
+    order: 1
+  datasource:
+    hikari:
+      maximum-pool-size: 15
+    dynamic:
+      primary: master
+      datasource:
+        master:
+          url: jdbc:mysql://47.104.108.36:4706/happy_reading?autoReconnect=true&useUnicode=true&character_set_server=utf8&collation_server=utf8_unicode_ci&characterEncoding=utf-8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+          username: happy_reading
+          password: Pushme_123456
+          driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 0
+    host: 47.104.108.36
+    port: 6379
+    password: 123456
+    timeout: 300
+    jedis:
+      pool:
+        max-active: 1024
+        max-idle: 200
+        max-wait: 50000
+        min-idle: 0
+
+
+
+mybatis-plus:
+  type-enums-package: com.pantanal.read.common.bean.enums

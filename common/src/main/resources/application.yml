@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    include: common-@spring.profiles.active@
+    active: @spring.profiles.active@
+  messages:
+    encoding: UTF-8
+
+logging:
+  level:
+    root:  ERROR
+    org.springframework:  ERROR
+    org.mybatis:  ERROR
+    org.pantanal.ddcollect.common:  DEBUG

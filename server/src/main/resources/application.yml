@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    include: common-@spring.profiles.active@, server
+    active: @spring.profiles.active@
+  messages:
+    encoding: UTF-8
+  jackson:
+    # 转换对象时过滤掉null值
+    #default-property-inclusion: non_null
+    # 出参时所有属性自动转下划线风格
+    property-naming-strategy: SNAKE_CASE

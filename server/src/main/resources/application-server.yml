@@ -1,0 +1,13 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /server
+  syscfg:
+    syncProxyIp: true
+    #单次获取400个
+    proxyIpUrl: http://http.tiqu.alicdns.com/getip3?num=400&type=2&pro=0&city=0&yys=0&port=1&pack=67362&ts=1&ys=0&cs=0&lb=1&sb=0&pb=45&mr=1&regions=110000,130000,140000,150000,210000,310000,320000,330000,340000,350000,360000,370000,410000,430000,440000,500000,510000,530000,610000,620000,640000
+    #不配置,默认是项目根目录
+    #collectorJarDir: /collector_jars_server
+mybatis-plus:
+  #configuration:
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
