@@ -58,15 +58,15 @@ public class ChannelsV1Api {
 
   @ApiOperation("获取频道内容-榜单,TODO")
   @ApiImplicitParams({
-      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "Integer"),
-      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "Integer")
+      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "int"),
+      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "int")
   })
   @GetMapping("/channels/books/{channelId}")
   public ResponseEntity books(@RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @PathVariable("channelId") Long channelId) {
     log.info("====books, page_index:{}, page_size:{}, channelId:{}===", page_index, page_size, channelId);
 
 
-    Page page = new Page<BookBean>(page_index / page_size + 1, page_size);
+    Page page = new Page<BookBean>((page_index - 1) * page_size, page_size);
     QueryWrapper<BookBean> queryWrapper = new QueryWrapper<>();
 
     IPage pageResult = bookDao.selectPage(page, queryWrapper);
@@ -80,15 +80,15 @@ public class ChannelsV1Api {
 
   @ApiOperation("获取频道内容-书籍列表,TODO")
   @ApiImplicitParams({
-      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "Integer"),
-      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "Integer")
+      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "int"),
+      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "int")
   })
   @GetMapping("/channels/book-ranking/{channelId}")
   public ResponseEntity booksRanking(@RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @PathVariable("channelId") Long channelId) {
     log.info("====booksRanking, page_index:{}, page_size:{}, channelId:{}===", page_index, page_size, channelId);
 
 
-    Page page = new Page<BookBean>(page_index / page_size + 1, page_size);
+    Page page = new Page<BookBean>((page_index - 1) * page_size, page_size);
     QueryWrapper<BookBean> queryWrapper = new QueryWrapper<>();
 
     IPage pageResult = bookDao.selectPage(page, queryWrapper);

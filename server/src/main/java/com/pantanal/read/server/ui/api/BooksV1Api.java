@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pantanal.read.common.bean.BookBean;
+import com.pantanal.read.common.bean.BookChapterBean;
+import com.pantanal.read.common.bean.BookTypeBean;
+import com.pantanal.read.common.dao.BookChapterDao;
 import com.pantanal.read.common.dao.BookDao;
+import com.pantanal.read.common.dao.BookTypeDao;
 import com.pantanal.read.common.form.DataList;
 import com.pantanal.read.common.form.Result;
 import io.swagger.annotations.Api;
@@ -12,11 +16,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Api：修饰整个类，描述Controller的作用
@@ -38,27 +45,37 @@ import javax.annotation.Resource;
 public class BooksV1Api {
   @Resource
   private BookDao bookDao;
+  @Resource
+  private BookTypeDao bookTypeDao;
+
 
   @ApiOperation("获取所有小说")
   @ApiImplicitParams({
-      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "Integer"),
-      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "Integer"),
-      @ApiImplicitParam(name = "book_type", value = "图书类型", required = false, dataType = "String")
+      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "int"),
+      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "int"),
+      @ApiImplicitParam(name = "book_type", value = "图书类型", required = false, dataType = "string")
   })
   @GetMapping("/books")
   public ResponseEntity books(@RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @RequestParam(defaultValue = "") String book_type) {
     log.info("====books, page_index:{}, page_size:{}, book_type:{}===", page_index, page_size, book_type);
 
 
-    Page page = new Page<BookBean>(page_index / page_size + 1, page_size);
+    Page page = new Page<BookBean>((page_index - 1) * page_size, page_size);
     QueryWrapper<BookBean> queryWrapper = new QueryWrapper<>();
     if (StringUtils.isNotBlank(book_type)) {
-      queryWrapper.lambda().eq(BookBean::getTypeName, book_type);
+      BookTypeBean bookType = bookTypeDao.selectOne(new QueryWrapper<BookTypeBean>().lambda().eq(BookTypeBean::getName, book_type));
+      if (bookType != null) {
+        queryWrapper.lambda().eq(BookBean::getTypeId, bookType.getId());
+      }
     }
     IPage pageResult = bookDao.selectPage(page, queryWrapper);
     DataList<BookBean> dataList = new DataList();
     dataList.setCount((int) pageResult.getTotal());
     dataList.setDataList(pageResult.getRecords());
+
+    for (BookBean book : dataList.getDataList()) {
+      book.setTypeName(book_type);
+    }
 
     Result<DataList<BookBean>> result = new Result<>(dataList);
     return ResponseEntity.ok(result);
@@ -69,9 +86,53 @@ public class BooksV1Api {
   public ResponseEntity detail(@PathVariable("bookId") Long bookId) {
     log.info("====detail, bookId:{}===", bookId);
 
-    BookBean book = bookDao.selectById(bookId);
+    BookBean queryBean = new BookBean();
+    queryBean.setId(bookId);
+    List<BookBean> chapterBeanList = bookDao.query(queryBean);
 
-    Result<BookBean> result = new Result<>(book);
+    Result<BookBean> result = new Result<>(CollectionUtils.isEmpty(chapterBeanList) ? null : chapterBeanList.get(0));
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation("获取小说最新章节")
+  @PostMapping("books/latest-chapter")
+  public ResponseEntity latestChapter(@RequestBody Long[] bookIds) {
+    log.info("====latestChapter===");
+
+    BookBean queryBean = new BookBean();
+    queryBean.setIds(bookIds);
+    List<BookBean> chapterBeanList = bookDao.query(queryBean);
+
+    DataList<BookBean> dataList = new DataList();
+    dataList.setCount(chapterBeanList.size());
+    dataList.setDataList(chapterBeanList);
+
+    Result<DataList<BookBean>> result = new Result<>(dataList);
+    return ResponseEntity.ok(result);
+  }
+
+  @ApiOperation("搜索小说")
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = true, dataType = "int"),
+      @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = true, dataType = "int"),
+      @ApiImplicitParam(name = "keyword", value = "关键词", required = false, dataType = "string")
+  })
+  @GetMapping("/search/books")
+  public ResponseEntity searchBooks(@RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @RequestParam(defaultValue = "") String keyword) {
+    log.info("====searchBooks, page_index:{}, page_size:{}, keyword:{}===", page_index, page_size, keyword);
+
+
+    BookBean queryBean = new BookBean();
+    queryBean.setPstart((page_index - 1) * page_size);
+    queryBean.setPlimit(page_size);
+    queryBean.setName(keyword);
+    List<BookBean> chapterBeanList = bookDao.query(queryBean);
+
+    DataList<BookBean> dataList = new DataList();
+    dataList.setCount(chapterBeanList.size());
+    dataList.setDataList(chapterBeanList);
+
+    Result<DataList<BookBean>> result = new Result<>(dataList);
     return ResponseEntity.ok(result);
   }
 }

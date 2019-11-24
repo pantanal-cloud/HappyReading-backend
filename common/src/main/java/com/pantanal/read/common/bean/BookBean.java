@@ -1,17 +1,20 @@
 package com.pantanal.read.common.bean;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.pantanal.read.common.bean.BaseBean;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author mybatis plus genertor
@@ -23,44 +26,56 @@ import lombok.experimental.Accessors;
 @TableName("book")
 public class BookBean extends BaseBean {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+  @TableId(value = "id", type = IdType.AUTO)
+  private Long id;
 
-    private String coverUrl;
+  @TableField(exist = false)
+  private Long bookId;
 
-    private String name;
+  private String coverUrl;
 
-    private String intro;
+  private String name;
 
-    private String author;
+  private String intro;
 
-    private Boolean isFinished;
+  private String author;
 
-    private Boolean free;
+  private Boolean isFinished;
 
-    private Long typeId;
+  private Boolean free;
 
-    private String typeName;
+  private Long typeId;
 
-    private Integer wordNum;
+  @TableField(exist = false)
+  private BookTypeBean type;
 
-    private Integer clickNum;
+  @TableField(exist = false)
+  private String typeName;
 
-    private Integer collectionNum;
+  private Integer wordNum;
 
-    private Integer recommendNum;
+  private Integer clickNum;
 
-    private LocalDateTime createTime;
+  private Integer collectionNum;
 
-    private Integer chapterCount;
+  private Integer recommendNum;
 
-    private Long lastChapterId;
+  private LocalDateTime createTime;
 
-    private Long freeChapterId;
+  private Integer chapterCount;
 
-    private String channelIds;
+  private Long lastChapterId;
+
+  @TableField(exist = false)
+  private BookChapterBean lastChapter;
+
+  private Long freeChapterId;
+  @TableField(exist = false)
+  private BookChapterBean freeChapter;
+
+  private String channelIds;
 
 
 }

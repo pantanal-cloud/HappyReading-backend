@@ -1,7 +1,7 @@
 server:
   port: 8089
   servlet:
-    context-path: /server
+    context-path:
   syscfg:
     syncProxyIp: true
     #单次获取400个

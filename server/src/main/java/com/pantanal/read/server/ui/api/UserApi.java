@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserApi {
     @ApiOperation("查询用户")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "用户id", required = true, dataType = "String")
+            @ApiImplicitParam(name = "id", value = "用户id", required = true, dataType = "string")
     })
     @GetMapping("/get")
     public ResponseEntity get(@RequestParam Long id) {
