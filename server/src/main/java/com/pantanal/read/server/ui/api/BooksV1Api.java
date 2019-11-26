@@ -23,8 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Api：修饰整个类，描述Controller的作用
@@ -47,7 +46,7 @@ public class BooksV1Api {
   @Resource
   private BookDao bookDao;
   @Resource
-  private BookTypeDao bookTypeDao;
+  private BookChapterDao bookChapterDao;
 
 
   @ApiOperation("获取所有小说")
@@ -80,11 +79,18 @@ public class BooksV1Api {
   public ResponseEntity detail(@PathVariable("bookId") Long bookId) {
     log.info("====detail, bookId:{}===", bookId);
 
-    BookBean queryBean = new BookBean();
-    queryBean.setId(bookId);
-    List<BookBean> chapterBeanList = bookDao.query(queryBean);
+    BookBean bookBean = bookDao.selectById(bookId);
 
-    Result<BookBean> result = new Result<>(CollectionUtils.isEmpty(chapterBeanList) ? null : chapterBeanList.get(0));
+    Map<String, Object> map = new HashMap<>();
+    map.put("book", bookBean);
+    map.put("chapter_count", bookBean != null ? NumberUtil.defaultValue(bookBean.getChapterCount()) : null);
+    map.put("last_chapter", null);
+    if (bookBean != null && bookBean.getLastChapterId() != null) {
+      BookChapterBean bookChapterBean = bookChapterDao.selectById(bookBean.getLastChapterId());
+      map.put("last_chapter", bookChapterBean);
+    }
+
+    Result result = new Result<>(map);
     return ResponseEntity.ok(result);
   }
 
@@ -97,11 +103,17 @@ public class BooksV1Api {
     queryBean.setIds(bookIds);
     List<BookBean> chapterBeanList = bookDao.query(queryBean);
 
-    DataList<BookBean> dataList = new DataList();
+    DataList dataList = new DataList();
     dataList.setCount(chapterBeanList.size());
-    dataList.setDataList(chapterBeanList);
+    for (BookBean book : chapterBeanList) {
+      Map<String, Object> map = new HashMap<>();
+      map.put("book_id", book.getId());
+      map.put("chapter_count", NumberUtil.defaultValue(book.getChapterCount()));
+      map.put("last_chapter", book.getLastChapter());
+      dataList.getDataList().add(map);
+    }
 
-    Result<DataList<BookBean>> result = new Result<>(dataList);
+    Result<DataList> result = new Result<>(dataList);
     return ResponseEntity.ok(result);
   }
 

@@ -28,11 +28,11 @@ public class BookChapterBean extends BaseBean {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    @TableField("`index`")
     private Integer index;
 
     private String name;
-
+    @TableField("`desc`")
     private String desc;
 
     private LocalDateTime createTime;
