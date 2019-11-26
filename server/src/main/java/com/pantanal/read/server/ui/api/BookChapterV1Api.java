@@ -59,11 +59,7 @@ public class BookChapterV1Api {
     Page page = new Page<BookChapterBean>((page_index - 1) * page_size, page_size);
     IPage<BookChapterBean> pageResult = bookChapterDao.selectPage(page, queryWrapper);
 
-    DataList<BookChapterBean> dataList = new DataList();
-    dataList.setCount((int) pageResult.getTotal());
-    dataList.setDataList(pageResult.getRecords());
-
-    Result<DataList<BookChapterBean>> result = new Result<>(dataList);
+    Result result = new Result<>(pageResult.getRecords());
     return ResponseEntity.ok(result);
   }
 }

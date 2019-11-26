@@ -103,17 +103,16 @@ public class BooksV1Api {
     queryBean.setIds(bookIds);
     List<BookBean> chapterBeanList = bookDao.query(queryBean);
 
-    DataList dataList = new DataList();
-    dataList.setCount(chapterBeanList.size());
+    List list = new ArrayList();
     for (BookBean book : chapterBeanList) {
       Map<String, Object> map = new HashMap<>();
       map.put("book_id", book.getId());
       map.put("chapter_count", NumberUtil.defaultValue(book.getChapterCount()));
       map.put("last_chapter", book.getLastChapter());
-      dataList.getDataList().add(map);
+      list.add(map);
     }
 
-    Result<DataList> result = new Result<>(dataList);
+    Result result = new Result<>(list);
     return ResponseEntity.ok(result);
   }
 
