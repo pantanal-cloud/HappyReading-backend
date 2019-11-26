@@ -11,6 +11,7 @@ import com.pantanal.read.common.dao.BookDao;
 import com.pantanal.read.common.dao.BookTypeDao;
 import com.pantanal.read.common.form.DataList;
 import com.pantanal.read.common.form.Result;
+import com.pantanal.read.common.util.NumberUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -53,29 +54,22 @@ public class BooksV1Api {
   @ApiImplicitParams({
       @ApiImplicitParam(name = "page_index", value = "翻页第几页, start with 1.", required = false, dataType = "int"),
       @ApiImplicitParam(name = "page_size", value = "每页显示多少条", required = false, dataType = "int"),
-      @ApiImplicitParam(name = "book_type", value = "图书类型", required = false, dataType = "string")
+      @ApiImplicitParam(name = "book_type", value = "图书类型id", required = false, dataType = "long")
   })
   @GetMapping("/books")
-  public ResponseEntity books(@RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @RequestParam(defaultValue = "") String book_type) {
+  public ResponseEntity books(@RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @RequestParam(defaultValue = "") Long book_type) {
     log.info("====books, page_index:{}, page_size:{}, book_type:{}===", page_index, page_size, book_type);
 
 
     Page page = new Page<BookBean>((page_index - 1) * page_size, page_size);
     QueryWrapper<BookBean> queryWrapper = new QueryWrapper<>();
-    if (StringUtils.isNotBlank(book_type)) {
-      BookTypeBean bookType = bookTypeDao.selectOne(new QueryWrapper<BookTypeBean>().lambda().eq(BookTypeBean::getName, book_type));
-      if (bookType != null) {
-        queryWrapper.lambda().eq(BookBean::getTypeId, bookType.getId());
-      }
+    if (NumberUtil.defaultValue(book_type) > 0) {
+      queryWrapper.lambda().eq(BookBean::getTypeId, book_type);
     }
     IPage pageResult = bookDao.selectPage(page, queryWrapper);
     DataList<BookBean> dataList = new DataList();
     dataList.setCount((int) pageResult.getTotal());
     dataList.setDataList(pageResult.getRecords());
-
-    for (BookBean book : dataList.getDataList()) {
-      book.setTypeName(book_type);
-    }
 
     Result<DataList<BookBean>> result = new Result<>(dataList);
     return ResponseEntity.ok(result);

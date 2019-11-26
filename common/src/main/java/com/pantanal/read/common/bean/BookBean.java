@@ -46,12 +46,6 @@ public class BookBean extends BaseBean {
 
   private Boolean free;
 
-  private Long typeId;
-
-  @TableField(exist = false)
-  private BookTypeBean type;
-
-  @TableField(exist = false)
   private String typeName;
 
   private Integer wordNum;
@@ -66,16 +60,19 @@ public class BookBean extends BaseBean {
 
   private Integer chapterCount;
 
-  private Long lastChapterId;
+  private String channelIds;
 
+  private Long typeId;
+  @TableField(exist = false)
+  private BookTypeBean type;
+
+  private Long lastChapterId;
   @TableField(exist = false)
   private BookChapterBean lastChapter;
 
   private Long freeChapterId;
   @TableField(exist = false)
   private BookChapterBean freeChapter;
-
-  private String channelIds;
 
 
 }

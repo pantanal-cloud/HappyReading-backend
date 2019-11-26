@@ -12,7 +12,7 @@
         <result column="is_finished" property="isFinished"/>
         <result column="free" property="free"/>
         <result column="type_id" property="typeId"/>
-        <result column="type.name" property="typeName"/>
+        <result column="type_name" property="typeName"/>
         <result column="word_num" property="wordNum"/>
 
         <result column="click_num" property="clickNum"/>
@@ -23,12 +23,6 @@
         <result column="free_chapter_id" property="freeChapterId"/>
         <result column="last_chapter_id" property="lastChapterId"/>
         <result column="channel_ids" property="channelIds"/>
-
-        <association property="type" javaType="com.pantanal.read.common.bean.BookTypeBean">
-            <id column="type.id" property="id"/>
-            <result column="type.name" property="name"/>
-            <result column="type.selected_status" property="selectedStatus"/>
-        </association>
 
         <association property="lastChapter" javaType="com.pantanal.read.common.bean.BookChapterBean">
             <id column="last_chapter.id" property="id"/>
@@ -51,7 +45,6 @@
 
     <sql id="queryFrom">
         from book as book
-        LEFT JOIN `book_type` AS `type` ON book.type_id = `type`.id
         LEFT JOIN book_chapter AS last_chapter ON book.last_chapter_id = last_chapter.id
         LEFT JOIN book_chapter AS free_chapter ON book.free_chapter_id = free_chapter.id
         where 1=1
@@ -74,9 +67,6 @@
     <select id="query" resultMap="book_resultmap" parameterType="com.pantanal.read.common.bean.BookBean">
 
         select book.*,
-        `type`.id as `type.id`,
-        `type`.name as `type.name`,
-        `type`.selected_status as `type.description`,
 
         last_chapter.id as `last_chapter.id`,
         last_chapter.name as `last_chapter.name`,
