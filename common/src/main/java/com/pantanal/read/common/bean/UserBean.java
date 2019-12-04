@@ -34,19 +34,23 @@ public class UserBean extends BaseBean {
     private String name;
 
     /**
-     * 用户名
+     *
      */
-    private String username;
+    private String wechatOpenid;
 
     /**
      * 密码
      */
-    private String password;
+    private String phone;
 
     /**
      * 0:NORMAL;-1:DELETED
      */
     private State state;
+    /**
+     * 余额
+     */
+    private int balance;
 
     private Long roleid;
 

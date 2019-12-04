@@ -1,15 +1,22 @@
 package com.pantanal.read.server.ui.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.pantanal.read.common.bean.BookBean;
+import com.pantanal.read.common.bean.UserBean;
+import com.pantanal.read.common.dao.BookDao;
+import com.pantanal.read.common.dao.UserDao;
+import com.pantanal.read.common.form.DataList;
+import com.pantanal.read.common.form.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Api：修饰整个类，描述Controller的作用
@@ -24,19 +31,33 @@ import org.springframework.web.bind.annotation.RestController;
  * @ApiParamImplicitL：一个请求参数
  * @ApiParamsImplicit 多个请求参数
  */
-@Api(description = "用户API")
+@Api(description = "User API")
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/v1")
 @Slf4j
 public class UserApi {
-    @ApiOperation("查询用户")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "用户id", required = true, dataType = "string")
-    })
-    @GetMapping("/get")
-    public ResponseEntity get(@RequestParam Long id) {
-        log.info("====get user:{}===", id);
+  @Resource
+  private UserDao userDao;
 
-        return ResponseEntity.ok("");
+  @ApiOperation("微信登录API")
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "wechatOpenId", value = "微信openId", required = true, dataType = "string")
+  })
+  @PostMapping("/login")
+  public ResponseEntity get(@RequestParam String wechatOpenId) {
+    log.info("====login user:{}===", wechatOpenId);
+    QueryWrapper<UserBean> queryWrapper = new QueryWrapper<>();
+    queryWrapper.lambda().eq(UserBean::getWechatOpenid, wechatOpenId);
+    List<UserBean> userList = userDao.selectList(queryWrapper);
+    if (userList.size() > 0) {
+      Result result = new Result<>(userList.get(0));
+      return ResponseEntity.ok(result);
+    } else {
+      UserBean user = new UserBean();
+      user.setWechatOpenid(wechatOpenId);
+      userDao.insert(user);
+      Result result = new Result<>(user);
+      return ResponseEntity.ok(result);
     }
+  }
 }
