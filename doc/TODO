@@ -1,0 +1,14 @@
+api:
+  http://47.104.108.36:8089/swagger-ui.html
+
+框架
+  spring boot mybatis plus
+  启动部署，spring boot 打成jar包 启动就行
+
+TODO:
+  api 差支付订单  
+  还有 业务的管理后台还没做，管理后台做起来快
+
+
+
+
