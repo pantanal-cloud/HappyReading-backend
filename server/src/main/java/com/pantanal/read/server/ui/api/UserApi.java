@@ -7,6 +7,8 @@ import com.pantanal.read.common.dao.BookDao;
 import com.pantanal.read.common.dao.UserDao;
 import com.pantanal.read.common.form.DataList;
 import com.pantanal.read.common.form.Result;
+import com.pantanal.read.server.common.Token;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -50,12 +52,16 @@ public class UserApi {
     queryWrapper.lambda().eq(UserBean::getWechatOpenid, wechatOpenId);
     List<UserBean> userList = userDao.selectList(queryWrapper);
     if (userList.size() > 0) {
-      Result result = new Result<>(userList.get(0));
+      UserBean u0 = userList.get(0);
+      u0.setToken(Token.genUserToken(u0.getId()));
+      Result result = new Result<>(u0);
       return ResponseEntity.ok(result);
     } else {
       UserBean user = new UserBean();
       user.setWechatOpenid(wechatOpenId);
       userDao.insert(user);
+      // TODO check user id is or not exist
+      user.setToken(Token.genUserToken(user.getId()));
       Result result = new Result<>(user);
       return ResponseEntity.ok(result);
     }

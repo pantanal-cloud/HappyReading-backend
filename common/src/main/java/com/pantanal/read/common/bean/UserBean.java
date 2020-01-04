@@ -61,5 +61,7 @@ public class UserBean extends BaseBean {
      */
     private String description;
 
+    @TableField(exist = false)
+    private String token;
 
 }

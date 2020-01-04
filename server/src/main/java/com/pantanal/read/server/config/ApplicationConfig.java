@@ -3,6 +3,8 @@ package com.pantanal.read.server.config;
 import com.pantanal.read.server.common.SysCfg;
 import com.pantanal.read.server.ui.interceptor.ActionFilter;
 import com.pantanal.read.server.ui.interceptor.ActionInterceptor;
+import com.pantanal.read.server.ui.interceptor.TokenInterceptor;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -14,14 +16,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
-  /**
-   * 拦截器
-   */
-  @Bean
-  public ActionInterceptor myActionInterceptor() {
-    return new ActionInterceptor();
-  }
-
 
   /**
    * 添加Interceptor 重写添加拦截器方法并添加配置拦截器<br>
@@ -38,7 +32,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
    */
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(myActionInterceptor()).addPathPatterns("/**/*.do");
+    registry.addInterceptor(new ActionInterceptor()).addPathPatterns("/**/*.do");
+    registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/**").excludePathPatterns("/**/*.do","/error/**","/moltran2/**","/web/**","/android/**","/v1/login","/js/**","/css/**","/images/**","/static/**");
   }
 
   /**
