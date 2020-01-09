@@ -70,9 +70,10 @@ public class BookBean extends BaseBean {
   @TableField(exist = false)
   private BookChapterBean lastChapter;
 
-  private Long freeChapterId;
   @TableField(exist = false)
   private BookChapterBean freeChapter;
 
-
+  public Long getBookId() {
+    return id;
+  }
 }

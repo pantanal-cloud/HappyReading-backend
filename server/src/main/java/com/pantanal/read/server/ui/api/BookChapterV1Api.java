@@ -2,16 +2,16 @@ package com.pantanal.read.server.ui.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pantanal.read.common.bean.BookBean;
-import com.pantanal.read.common.bean.BookChapterBean;
-import com.pantanal.read.common.bean.BookTypeBean;
-import com.pantanal.read.common.bean.ChannelBean;
+import com.pantanal.read.common.bean.*;
 import com.pantanal.read.common.dao.BookChapterDao;
 import com.pantanal.read.common.dao.BookDao;
 import com.pantanal.read.common.dao.BookTypeDao;
+import com.pantanal.read.common.dao.UserBookDao;
 import com.pantanal.read.common.form.DataList;
 import com.pantanal.read.common.form.Result;
+import com.pantanal.read.common.util.NumberUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -42,6 +43,8 @@ import java.util.List;
 @Slf4j
 public class BookChapterV1Api {
   @Resource
+  private UserBookDao userBookDao;
+  @Resource
   private BookChapterDao bookChapterDao;
 
   @ApiOperation("获取小说章节列表")
@@ -52,14 +55,28 @@ public class BookChapterV1Api {
   })
 
   @GetMapping("/books/{bookId}/chapters")
-  public ResponseEntity getBookTypes(@PathVariable("bookId") Long bookId, @RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @RequestParam(defaultValue = "asc") String order) {
+  public ResponseEntity getBookTypes(HttpServletRequest request, @PathVariable("bookId") Long bookId, @RequestParam(defaultValue = "1") Integer page_index, @RequestParam(defaultValue = "10") Integer page_size, @RequestParam(defaultValue = "asc") String order) {
     log.info("====getBookTypes===");
+
+    long userId = (long)request.getAttribute("userId");
+    UserBookBean userBook = userBookDao.selectOne(Wrappers.<UserBookBean>lambdaQuery().eq(UserBookBean::getUserId, userId).eq(UserBookBean::getBookId, bookId));
+
     QueryWrapper<BookChapterBean> queryWrapper = new QueryWrapper();
     queryWrapper.lambda().eq(BookChapterBean::getBookId, bookId).orderBy("asc".equalsIgnoreCase(order) || "desc".equalsIgnoreCase(order), "asc".equalsIgnoreCase(order), BookChapterBean::getIndex);
     Page page = new Page<BookChapterBean>((page_index - 1) * page_size, page_size);
     IPage<BookChapterBean> pageResult = bookChapterDao.selectPage(page, queryWrapper);
 
-    Result result = new Result<>(pageResult.getRecords());
+    List<BookChapterBean> chapterList = pageResult.getRecords();
+    int freeChapterIndex = userBook == null ? 0 : NumberUtil.defaultValue(userBook.getFreeChapterIndex());
+    for (BookChapterBean bookChapterBean : chapterList) {
+      if (NumberUtil.defaultValue(bookChapterBean.getIndex()) <= freeChapterIndex) {
+        bookChapterBean.setFree(true);
+      } else {
+        bookChapterBean.setFree(false);
+      }
+    }
+
+    Result result = new Result<>(chapterList);
     return ResponseEntity.ok(result);
   }
 }

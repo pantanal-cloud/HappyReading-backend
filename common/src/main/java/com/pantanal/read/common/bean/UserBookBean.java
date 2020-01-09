@@ -1,11 +1,9 @@
 package com.pantanal.read.common.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.pantanal.read.common.bean.BaseBean;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,32 +14,31 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author mybatis plus genertor
- * @since 2019-11-18
+ * @since 2020-01-09
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("book_chapter")
-public class BookChapterBean extends BaseBean {
+@TableName("user_book")
+public class UserBookBean extends BaseBean {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    @TableField("`index`")
-    private Integer index;
 
-    private String name;
-    @TableField("`desc`")
-    private String desc;
-
-    private LocalDateTime createTime;
+    private Long userId;
 
     private Long bookId;
 
-    @TableField(exist = false)
-    private BookBean book;
+    /**
+     * 可以免费到哪个章节index
+     */
+    private Integer freeChapterIndex;
+    /**
+     * 已经读到哪个章节index
+     */
+    private Integer readChapterIndex;
 
-    @TableField(exist = false)
-    private boolean free;
+
 }

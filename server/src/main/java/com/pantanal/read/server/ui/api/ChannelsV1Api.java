@@ -46,10 +46,10 @@ public class ChannelsV1Api {
 
   @ApiOperation("获取所有频道")
   @GetMapping("/channels")
-  public ResponseEntity channels(@RequestAttribute("userId") long userId) {
+  public ResponseEntity channels() {
     log.info("====channels===");
 
-    log.info("userId is:" + userId);
+    //log.info("userId is:" + userId);
 
     List channelList = channelDao.selectList(new QueryWrapper<ChannelBean>());
 
