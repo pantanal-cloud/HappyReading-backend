@@ -3,12 +3,19 @@ package com.pantanal.read.server.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Api：修饰整个类，描述Controller的作用
  * @ApiOperation：描述一个类的一个方法，或者说一个接口
@@ -30,6 +37,17 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket controllerApi() {
+        //在配置好的配置类中增加此段代码即可
+        ParameterBuilder ticketPar = new ParameterBuilder();
+
+        ticketPar.name("X-Token").description("用户Token")
+            .modelRef(new ModelRef("string"))
+            .parameterType("header")
+            .required(false).build();
+
+        List<Parameter> pars = new ArrayList<Parameter>();
+        pars.add(ticketPar.build());
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
                         .title("标题：happy reading_接口文档")
@@ -41,6 +59,7 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.pantanal.read.server.ui.api"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .globalOperationParameters(pars);
     }
 }
