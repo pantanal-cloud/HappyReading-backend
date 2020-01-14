@@ -70,13 +70,22 @@ public class NotifyV1Api {
               order.setStatus(2);
               order.setPayAt(DateUtil.formatDateTime(new Date()));
               orderDao.updateById(order);
-              // update user balance
-              UserBean user = userDao.selectById(order.getUserId());
-              if (user != null) {
-                user.setBalance(user.getBalance() + order.getRealPrice());
-                userDao.updateById(user);
+              if (order.getType() == 1) {
+                // 充值
+                // update user balance
+                UserBean user = userDao.selectById(order.getUserId());
+                if (user != null) {
+                  user.setBalance(user.getBalance() + order.getRealPrice());
+                  userDao.updateById(user);
+                } else {
+                  log.info("该订单的用户ID查不到用户信息:" + order.getUserId());
+                }
+              } else if (order.getType() == 2) {
+                // 会员
+                // TODO
+                
               } else {
-                log.info("该订单的用户ID查不到用户信息:" + order.getUserId());
+                log.info("该订单的类型错误:" + order.getType());
               }
             } else {
               log.info("订单状态不是待支付:" + order.getStatus());

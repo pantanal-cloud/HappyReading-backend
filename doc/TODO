@@ -14,3 +14,5 @@ TODO:
 
 
 
+token test:
+  curl -X GET -H 'X-Token: yDI89i9q506IFEA3WwnEO/BW+mvz8kIY8VKlU2pLGTE=' "http://localhost:8089/v1/products"
