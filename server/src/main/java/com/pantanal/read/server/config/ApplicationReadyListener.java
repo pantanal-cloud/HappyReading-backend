@@ -3,6 +3,9 @@ package com.pantanal.read.server.config;
 import com.pantanal.read.server.common.Constant;
 import com.pantanal.read.server.common.MyResourceBundleModel;
 import com.pantanal.read.server.common.SysCfg;
+import com.pantanal.read.server.pay.wechat.WechatPayHolder;
+import com.pantanal.read.server.pay.wechat.sdk.MyWechatPayConfig;
+import com.pantanal.read.server.pay.wechat.sdk.WXPay;
 import com.pantanal.read.common.util.DateUtil;
 import com.pantanal.read.server.ui.converter.DateConverter;
 import com.pantanal.read.server.ui.converter.DoubleConverter;
@@ -32,6 +35,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Date;
+
 @Component
 @Slf4j
 public class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
@@ -82,6 +86,16 @@ public class ApplicationReadyListener implements ApplicationListener<Application
         });
         mappingJackson2HttpMessageConverter.getObjectMapper().registerModule(simpleModule);
 
+        // init wechat pay
+        try {
+            MyWechatPayConfig config = new MyWechatPayConfig();
+            WXPay wxpay = new WXPay(config);
+            WechatPayHolder.wxpayClient = wxpay;
+        } catch (Exception e) {
+            log.error("初始化微信支付失败!");
+            // TODO ignore
+            // System.exit(1);
+        }
 
         log.info("======初始化 DONE! base:" + Constant.CONTEXT_PATH + "=====");
     }

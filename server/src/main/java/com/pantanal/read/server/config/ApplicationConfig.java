@@ -33,7 +33,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(new ActionInterceptor()).addPathPatterns("/**/*.do");
-    registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/v1/**").excludePathPatterns("/v1/login");
+    registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/v1/**").excludePathPatterns("/v1/login","/v1/payNotify");
   }
 
   /**
