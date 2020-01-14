@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pantanal.read.common.bean.BookBean;
 import com.pantanal.read.common.bean.ChannelBean;
 import com.pantanal.read.common.bean.OrderBean;
+import com.pantanal.read.common.bean.UserBean;
 import com.pantanal.read.common.dao.BookDao;
 import com.pantanal.read.common.dao.ChannelDao;
 import com.pantanal.read.common.dao.OrderDao;
+import com.pantanal.read.common.dao.UserDao;
 import com.pantanal.read.common.form.DataList;
 import com.pantanal.read.common.form.Result;
 import com.pantanal.read.common.util.DateUtil;
@@ -51,6 +53,8 @@ import java.util.Map;
 public class NotifyV1Api {
   @Resource
   private OrderDao orderDao;
+  @Resource
+  private UserDao userDao;
 
 
   @ApiOperation("支付通知")
@@ -78,6 +82,14 @@ public class NotifyV1Api {
               order.setStatus(2);
               order.setPayAt(DateUtil.formatDateTime(new Date()));
               orderDao.updateById(order);
+              // update user balance
+              UserBean user = userDao.selectById(order.getUserId());
+              if (user != null) {
+                user.setBalance(user.getBalance() + order.getRealPrice());
+                userDao.updateById(user);
+              } else {
+                log.info("该订单的用户ID查不到用户信息:" + order.getUserId());
+              }
             } else {
               log.info("订单状态不是待支付:" + order.getStatus());
             }
