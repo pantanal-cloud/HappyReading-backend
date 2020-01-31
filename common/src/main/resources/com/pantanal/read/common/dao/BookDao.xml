@@ -16,13 +16,13 @@
         <result column="word_num" property="wordNum"/>
 
         <result column="click_num" property="clickNum"/>
+        <result column="url" property="url"/>
         <result column="collection_num" property="collectionNum"/>
         <result column="recommend_num" property="recommendNum"/>
         <result column="create_time" property="createTime"/>
         <result column="chapter_count" property="chapterCount"/>
-        <result column="free_chapter_id" property="freeChapterId"/>
         <result column="last_chapter_id" property="lastChapterId"/>
-        <result column="channel_ids" property="channelIds"/>
+        <result column="channel_ids" property="channelIds" typeHandler="com.pantanal.read.common.bean.type.JsonTypeHandler"/>
 
         <association property="lastChapter" javaType="com.pantanal.read.common.bean.BookChapterBean">
             <id column="last_chapter.id" property="id"/>

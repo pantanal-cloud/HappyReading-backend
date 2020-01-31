@@ -1,16 +1,15 @@
 package com.pantanal.read.common.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.pantanal.read.common.bean.BaseBean;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.time.LocalDateTime;
-
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.pantanal.read.common.bean.type.JsonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -44,6 +43,11 @@ public class BookBean extends BaseBean {
 
   private Boolean isFinished;
 
+  /**
+   * 资源详情url
+   */
+  private String url;
+
   private Boolean free;
 
   private String typeName;
@@ -60,9 +64,11 @@ public class BookBean extends BaseBean {
 
   private Integer chapterCount;
 
-  private String channelIds;
+  @TableField(typeHandler = JsonTypeHandler.class)
+  private Long[] channelIds;
 
   private Long typeId;
+
   @TableField(exist = false)
   private BookTypeBean type;
 

@@ -15,6 +15,9 @@ public class SysCfg {
      */
     private String proxyIpUrl;
 
+    //图书导入目录
+    private String bookImportDir;
+
     private String collectorJarDir;
     private boolean syncProxyIp = true;
 

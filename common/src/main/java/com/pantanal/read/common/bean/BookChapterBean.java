@@ -1,14 +1,14 @@
 package com.pantanal.read.common.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.pantanal.read.common.bean.BaseBean;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -32,6 +32,8 @@ public class BookChapterBean extends BaseBean {
     private Integer index;
 
     private String name;
+
+    private String url;
     @TableField("`desc`")
     private String desc;
 
@@ -44,4 +46,6 @@ public class BookChapterBean extends BaseBean {
 
     @TableField(exist = false)
     private boolean free;
+
+    private Boolean vip;
 }
