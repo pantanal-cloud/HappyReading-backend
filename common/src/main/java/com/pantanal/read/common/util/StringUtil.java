@@ -9,6 +9,17 @@ import java.util.ArrayList;
  * @author gudong
  */
 public class StringUtil {
+
+    /**
+     * 按照html的任何标签,例如<span><br/>等分割
+     *
+     * @param s
+     * @return
+     */
+    public static String removeHtmlTag(String s) {
+        return s.replaceAll("<[^>]+>", "");
+    }
+
     /**
      * 删除作为文件名的非法字符
      *

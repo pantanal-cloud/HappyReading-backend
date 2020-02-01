@@ -10,6 +10,7 @@ import com.pantanal.read.common.dao.BookChapterContentDao;
 import com.pantanal.read.common.dao.BookChapterDao;
 import com.pantanal.read.common.form.Result;
 import com.pantanal.read.common.util.HttpClientUtil;
+import com.pantanal.read.common.util.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -66,6 +67,7 @@ public class BookChapterContentV1Api {
         }
       }
     }
+    content.setContent(StringUtil.removeHtmlTag(StringUtils.defaultString(content.getContent())));
     Result<BookChapterContentBean> result = new Result<>(content);
     return ResponseEntity.ok(result);
   }
